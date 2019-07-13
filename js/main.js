@@ -13,7 +13,12 @@ fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-seta
 // función que pinta todo el main con datos del fetch
 function paintData(recipe) {
     paintTitle(recipe);
-    createSectionArticles(recipe);
+    paintButton('Seleccionar todo', headerSection);
+    paintButton('Deseleccionar todo', headerSection);
+    const classArticleSection = 'section-articles';
+    const classPriceSection = 'section-price';
+    createSection(recipe, classArticleSection);
+    createSection(recipe, classPriceSection);
 }
 // pinto el título de la receta en el header
 function paintTitle(recipe) {
@@ -23,21 +28,38 @@ function paintTitle(recipe) {
     titleSelector.appendChild(title);
     headerSection.appendChild(titleSelector);
 }
-// creo sección para lista
-function createSectionArticles(recipe) {
+// para pintar botones
+function paintButton(text, section) {
+    const buttonSelector = document.createElement('button');
+    const buttonText = document.createTextNode(text);
+    buttonSelector.setAttribute('type', 'button');
+    buttonSelector.appendChild(buttonText);
+    section.appendChild(buttonSelector);
+}
+// creo secciones
+function createSection(recipe, classList) {
     const sectionList = document.createElement('section');
-    sectionList.classList.add('section-list');
+    sectionList.classList.add(classList);
     mainSection.appendChild(sectionList);
-    createArticles(recipe, sectionList);
+    if (sectionList.classList.contains('section-articles')) {
+        createArticles(recipe, sectionList);
+    } else {
+        createPricestitles(sectionList, 'Subtotal: ');
+        createPricestitles(sectionList, 'Gastos de envío:');
+        createPricestitles(sectionList, 'Total:');
+        paintButton('Deseleccionar todo', sectionList);
+    }
 }
 // creo la lista de ingredientes, cada uno en un article
 function createArticles(recipe, sectionList) {
     recipe.ingredients.map(ingredient => {
         const articleSelector = document.createElement('article');
         createLabel(ingredient, articleSelector);
-        createArticlesubtitles(ingredient.brand, articleSelector, "");
+        if(ingredient.brand) {
+            createArticlesubtitles(ingredient.brand, articleSelector, "");
+        }
         createArticlesubtitles(ingredient.quantity, articleSelector, "");
-        createArticlesubtitles(ingredient.price, articleSelector, "€");
+        createArticlesubtitles(ingredient.price, articleSelector, " €");
         sectionList.appendChild(articleSelector);
     })
 }
@@ -62,4 +84,11 @@ function createArticlesubtitles(subtitle, articleSelector, unit) {
     const subtitleContent = document.createTextNode(subtitle + unit);
     subtitleSelector.appendChild(subtitleContent);
     articleSelector.appendChild(subtitleSelector);
+}
+// creo la lista de precios
+function createPricestitles(sectionList, title) {
+    const titleSelector = document.createElement('h3');
+    const titleContent = document.createTextNode(title);
+    titleSelector.appendChild(titleContent);
+    sectionList.appendChild(titleSelector);
 }
