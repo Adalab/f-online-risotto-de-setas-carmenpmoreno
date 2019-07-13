@@ -13,7 +13,7 @@ fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-seta
 // función que pinta todo el main con datos del fetch
 function paintData(recipe) {
     paintTitle(recipe);
-    createSectionList(recipe);
+    createSectionArticles(recipe);
 }
 // pinto el título de la receta en el header
 function paintTitle(recipe) {
@@ -24,21 +24,42 @@ function paintTitle(recipe) {
     headerSection.appendChild(titleSelector);
 }
 // creo sección para lista
-function createSectionList(recipe) {
+function createSectionArticles(recipe) {
     const sectionList = document.createElement('section');
     sectionList.classList.add('section-list');
     mainSection.appendChild(sectionList);
-    getIngredientes(recipe, sectionList);
-
+    createArticles(recipe, sectionList);
 }
-// creo la lista de ingredientes
-// obtengo ingredientes de data
-function getIngredientes(recipe, sectionList) {
-    const allIngredients = recipe.ingredients.map(ingredient => {
-        const listItemSelector = document.createElement('li');
-        const listItemContent = document.createTextNode(ingredient.product);
-        const listItem = listItemSelector.appendChild(listItemContent);
-        console.log(listItemSelector);
-        sectionList.appendChild(listItemSelector);
+// creo la lista de ingredientes, cada uno en un article
+function createArticles(recipe, sectionList) {
+    recipe.ingredients.map(ingredient => {
+        const articleSelector = document.createElement('article');
+        createLabel(ingredient, articleSelector);
+        createArticlesubtitles(ingredient.brand, articleSelector, "");
+        createArticlesubtitles(ingredient.quantity, articleSelector, "");
+        createArticlesubtitles(ingredient.price, articleSelector, "€");
+        sectionList.appendChild(articleSelector);
     })
+}
+function createLabel(ingredient, articleSelector) {
+    const labelSelector = document.createElement('label');
+    createInput(ingredient, labelSelector);
+    labelSelector.setAttribute('for', 'ingredient.product');
+    const labelContent = document.createTextNode(ingredient.product);
+    labelSelector.appendChild(labelContent);
+    articleSelector.appendChild(labelSelector);
+}
+function createInput(ingredient, labelSelector) {
+    const inputSelector = document.createElement('input');
+    inputSelector.setAttribute('id', 'ingredient.product');
+    inputSelector.setAttribute('type', 'checkbox');
+    inputSelector.setAttribute('value', 'ingredient.product');
+    inputSelector.setAttribute('name', 'ingredients');
+    labelSelector.appendChild(inputSelector);
+}
+function createArticlesubtitles(subtitle, articleSelector, unit) {
+    const subtitleSelector = document.createElement('h4');
+    const subtitleContent = document.createTextNode(subtitle + unit);
+    subtitleSelector.appendChild(subtitleContent);
+    articleSelector.appendChild(subtitleSelector);
 }
