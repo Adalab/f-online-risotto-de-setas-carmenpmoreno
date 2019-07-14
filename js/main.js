@@ -11,33 +11,25 @@ fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-seta
         );
     })
 function paintData(recipe) {
-    paintTitle(recipe);
-    paintButton('Seleccionar todo', headerSection);
-    paintButton('Deseleccionar todo', headerSection);
+    paintElement(headerSection, recipe.name, 'h2', 'class', 'main-title');
+    paintElement(headerSection, 'Seleccionar todo', 'button', 'type', 'button')
+    paintElement(headerSection, 'Deseleccionar todo', 'button', 'type', 'button')
     const classArticleSection = 'section-articles';
     const classPriceSection = 'section-price';
     createSection(recipe, classArticleSection);
     createSection(recipe, classPriceSection);
 
     const ingredientInputs = document.querySelectorAll('.ingredient-input');
-    console.log(ingredientInputs);
     for (const ingredientInput of ingredientInputs) {
         ingredientInput.addEventListener('click', handleIngredientInput);
     }
 }
-function paintTitle(recipe) {
-    const title = document.createTextNode(recipe.name);
-    const titleSelector = document.createElement('h2');
-    titleSelector.classList.add('title');
-    titleSelector.appendChild(title);
-    headerSection.appendChild(titleSelector);
-}
-function paintButton(text, section) {
-    const buttonSelector = document.createElement('button');
-    const buttonText = document.createTextNode(text);
-    buttonSelector.setAttribute('type', 'button');
-    buttonSelector.appendChild(buttonText);
-    section.appendChild(buttonSelector);
+function paintElement(section, node, element, atribute, nameAtribute) {
+    const elementSelector = document.createElement(element);
+    const elementContent = document.createTextNode(node);
+    elementSelector.appendChild(elementContent);
+    section.appendChild(elementSelector);
+    elementSelector.setAttribute(atribute, nameAtribute);
 }
 function createSection(recipe, classList) {
     const sectionList = document.createElement('section');
@@ -46,10 +38,14 @@ function createSection(recipe, classList) {
     if (sectionList.classList.contains('section-articles')) {
         createArticles(recipe, sectionList);
     } else {
-        createPricestitles(sectionList, 'Subtotal: ');
-        createPricestitles(sectionList, 'Gastos de envío: ');
-        createPricestitles(sectionList, 'Total: ');
-        paintButton('Comprar ingredientes: ', sectionList);
+        paintElement(sectionList, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
+        paintElement(sectionList, "", 'p', 'class', 'subtotal')
+        paintElement(sectionList, 'Gastos de envío: ', 'h3', 'class', 'shippinf-cost-title');
+        paintElement(sectionList, "", 'p', 'class', 'shipping-cost')
+        paintElement(sectionList, 'Total: ', 'h3', 'class', 'total-title');
+        paintElement(sectionList, "", 'p', 'class', 'total')
+        // paintButton('Comprar ingredientes: ', sectionList);
+        paintElement(sectionList, 'Comprar ingredientes: ', 'button', 'type', 'button')
     }
 }
 function createArticles(recipe, sectionList) {
@@ -77,8 +73,8 @@ function createInput(ingredient, labelSelector) {
     inputSelector.setAttribute('id', ingredient.product);
     inputSelector.setAttribute('class', 'ingredient-input');
     inputSelector.setAttribute('type', 'checkbox');
-    inputSelector.setAttribute('value', ingredient.product);
-    inputSelector.setAttribute('name', 'ingredients');
+    inputSelector.setAttribute('value', ingredient.price);
+    inputSelector.setAttribute('name', 'ingredient-price');
     labelSelector.appendChild(inputSelector);
 }
 function createArticlesubtitles(subtitle, articleSelector, unit) {
@@ -87,23 +83,15 @@ function createArticlesubtitles(subtitle, articleSelector, unit) {
     subtitleSelector.appendChild(subtitleContent);
     articleSelector.appendChild(subtitleSelector);
 }
-function createPricestitles(sectionList, title) {
-    const titleSelector = document.createElement('h3');
-    const titleContent = document.createTextNode(title);
-    titleSelector.appendChild(titleContent);
-    sectionList.appendChild(titleSelector);
-}
-// INTERACCIONES
-
-// guardar precio en array ingredientsSelected cada vez que se selecciona:
-function handleIngredientInput(event) {
-    console.log(event.currentTarget.value);
-}
+// INTERACCIONES: guardar precio en array ingredientsSelected cada vez que se selecciona:
     // listener sobre todos los input (funcion paint data)
-
-    // toggle clase checked cuanto se hace "click" en uninput
-    // si checked -> push del ingredient.price a mi array ingredientsSelected
-    // si no -> eliminar precio del array...
+function handleIngredientInput(event) {
+    event.currentTarget.classList.toggle('checked');
+    if (event.currentTarget.classList.contains ('checked')) {
+        const newingredientsSelected = ingredientsSelected.push(event.currentTarget.value);
+        console.log(ingredientsSelected);
+    }
+}
 // pintar precio final en seccion precios
     // ...
 
