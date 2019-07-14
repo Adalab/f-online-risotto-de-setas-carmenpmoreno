@@ -19,6 +19,7 @@ function paintData(recipe) {
     const classArticleSection = 'section-articles';
     const classPriceSection = 'section-price';
     createSection(recipe, classArticleSection);
+    createSection(recipe, classPriceSection, subtotal);
 
     const ingredientInputs = document.querySelectorAll('.ingredient-input');
     for (const ingredientInput of ingredientInputs) {
@@ -39,13 +40,11 @@ function createSection(recipe, classList, subtotal) {
     if (sectionList.classList.contains('section-articles')) {
         createArticles(recipe, sectionList);
     } else {
-        paintElement(sectionList, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
-        paintElement(sectionList, subtotal, 'p', 'class', 'subtotal')
-        paintElement(sectionList, 'Gastos de envío: ', 'h3', 'class', 'shippinf-cost-title');
-        paintElement(sectionList, "", 'p', 'class', 'shipping-cost')
-        paintElement(sectionList, 'Total: ', 'h3', 'class', 'total-title');
-        paintElement(sectionList, "", 'p', 'class', 'total')
-        paintElement(sectionList, 'Comprar ingredientes: ', 'button', 'type', 'button')
+        paintElement(sectionList, '', 'section', 'class', 'section-total');
+        paintElement(sectionList, 'Comprar ingredientes: ', 'button', 'class', 'button-buy');
+        const buttonBuy = document.querySelector('.button-buy');
+        console.log(buttonBuy);
+        buttonBuy.addEventListener('click', handleButtonBuy);
     }
 }
 function createArticles(recipe, sectionList) {
@@ -97,14 +96,22 @@ function handleIngredientInput(event) {
         const newingredientsSelected = ingredientsSelected.filter(price => price !== parseFloat(event.currentTarget.value));
         ingredientsSelected = newingredientsSelected;
     }
+}
+// cuando pulso botón comprar, se pinta la sección con el precio:
+function handleButtonBuy(event) {
     printSubtotal();
 }
 function printSubtotal() {
     const result = ingredientsSelected.reduce((acc, number) => acc + number);
     let newSubtotal = result;
     console.log(newSubtotal);
-    const classPriceSection = 'section-price';
-    createSection(recipe, classPriceSection, newSubtotal);
+    const sectionList = document.querySelector('.section-total');
+    paintElement(sectionList, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
+    paintElement(sectionList, newSubtotal, 'p', 'class', 'subtotal')
+    paintElement(sectionList, 'Gastos de envío: ', 'h3', 'class', 'shippinf-cost-title');
+    paintElement(sectionList, "", 'p', 'class', 'shipping-cost')
+    paintElement(sectionList, 'Total: ', 'h3', 'class', 'total-title');
+    paintElement(sectionList, "", 'p', 'class', 'total')
     console.log('imprimo total');
 }
 
