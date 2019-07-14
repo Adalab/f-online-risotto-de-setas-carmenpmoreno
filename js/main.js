@@ -1,11 +1,13 @@
 const headerSection = document.querySelector('.header-section');
 const mainSection = document.querySelector('.main-section');
-const ingredientsSelected = [];
+let recipe = {}
+let ingredientsSelected = [];
+let subtotal = ""
 
 fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-setas.json')
     .then(response => response.json())
     .then(data => {
-        const recipe = data.recipe;
+        recipe = data.recipe;
         return (
             paintData(recipe)
         );
@@ -17,7 +19,6 @@ function paintData(recipe) {
     const classArticleSection = 'section-articles';
     const classPriceSection = 'section-price';
     createSection(recipe, classArticleSection);
-    createSection(recipe, classPriceSection);
 
     const ingredientInputs = document.querySelectorAll('.ingredient-input');
     for (const ingredientInput of ingredientInputs) {
@@ -31,7 +32,7 @@ function paintElement(section, node, element, atribute, nameAtribute) {
     section.appendChild(elementSelector);
     elementSelector.setAttribute(atribute, nameAtribute);
 }
-function createSection(recipe, classList) {
+function createSection(recipe, classList, subtotal) {
     const sectionList = document.createElement('section');
     sectionList.classList.add(classList);
     mainSection.appendChild(sectionList);
@@ -39,12 +40,11 @@ function createSection(recipe, classList) {
         createArticles(recipe, sectionList);
     } else {
         paintElement(sectionList, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
-        paintElement(sectionList, "", 'p', 'class', 'subtotal')
+        paintElement(sectionList, subtotal, 'p', 'class', 'subtotal')
         paintElement(sectionList, 'Gastos de envío: ', 'h3', 'class', 'shippinf-cost-title');
         paintElement(sectionList, "", 'p', 'class', 'shipping-cost')
         paintElement(sectionList, 'Total: ', 'h3', 'class', 'total-title');
         paintElement(sectionList, "", 'p', 'class', 'total')
-        // paintButton('Comprar ingredientes: ', sectionList);
         paintElement(sectionList, 'Comprar ingredientes: ', 'button', 'type', 'button')
     }
 }
@@ -84,17 +84,29 @@ function createArticlesubtitles(subtitle, articleSelector, unit) {
     articleSelector.appendChild(subtitleSelector);
 }
 // INTERACCIONES: guardar precio en array ingredientsSelected cada vez que se selecciona:
-    // listener sobre todos los input (funcion paint data)
+// listener sobre todos los input (funcion paint data)
 function handleIngredientInput(event) {
     event.currentTarget.classList.toggle('checked');
-    if (event.currentTarget.classList.contains ('checked')) {
-        const newingredientsSelected = ingredientsSelected.push(event.currentTarget.value);
-        console.log(ingredientsSelected);
+    // input checked -> añado elemento al array y si antes no lo he añadido
+    if (event.currentTarget.classList.contains('checked')
+        && !ingredientsSelected.find(price => price === event.currentTarget.value)) {
+        const numberPrice = parseFloat(event.currentTarget.value);
+        const newingredientsSelected = ingredientsSelected.push(numberPrice);
+        //  si no checked -> elimino ese elemento del array si estuviese incluído
+    } else {
+        const newingredientsSelected = ingredientsSelected.filter(price => price !== parseFloat(event.currentTarget.value));
+        ingredientsSelected = newingredientsSelected;
     }
+    printSubtotal();
 }
-// pintar precio final en seccion precios
-    // ...
-
+function printSubtotal() {
+    const result = ingredientsSelected.reduce((acc, number) => acc + number);
+    let newSubtotal = result;
+    console.log(newSubtotal);
+    const classPriceSection = 'section-price';
+    createSection(recipe, classPriceSection, newSubtotal);
+    console.log('imprimo total');
+}
 
 // botón seleccionar todo
     // listener botón
