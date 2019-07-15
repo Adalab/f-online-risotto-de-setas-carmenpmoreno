@@ -1,6 +1,7 @@
 const shippingCost = 7;
 const headerSection = document.querySelector('.header-section');
 const mainSection = document.querySelector('.main-section');
+
 let ingredientsSelected = [];
 let subtotal = 0;
 let total = 0;
@@ -20,68 +21,37 @@ function paintData(recipe) {
     const classPriceSection = 'section-price';
 
     paintElement(headerSection, recipe.name, 'h2', 'class', 'main-title');
-    paintElement(headerSection, 'Seleccionar todo', 'button', 'type', 'button')
-    paintElement(headerSection, 'Deseleccionar todo', 'button', 'type', 'button')
-
+    paintElement(headerSection, 'Seleccionar todo', 'button', 'class', 'select-all-button', 'type', 'button');
+    paintElement(headerSection, 'Deseleccionar todo', 'button', 'class', 'deselect-all-button', 'type', 'button');
     createSection(recipe, classArticleSection);
     createSection(recipe, classPriceSection, subtotal);
 
     const ingredientInputs = document.querySelectorAll('.ingredient-input');
+
     for (const ingredientInput of ingredientInputs) {
         ingredientInput.addEventListener('click', handleIngredientInput);
+    };
+
+    const selectButton = document.querySelector('.select-all-button');
+    selectButton.addEventListener('click', handleButtonSelect);
+}
+
+// INTERACCIONES:
+
+function handleButtonSelect(event) {
+    const ingredientInputs = document.querySelectorAll('.ingredient-input');
+    console.log(event.currentTarget.classList);
+    if (event.currentTarget.classList.contains('select-all-button')) {
+        ingredientInputs.forEach(ingredientInput => {
+            ingredientInput.setAttribute('checked', 'true');
+            const numberPrice = parseFloat(ingredientInput.value);
+            const newingredientsSelected = ingredientsSelected.push(numberPrice);
+            console.log(ingredientsSelected);
+            paintArticlePrice();
+        });
     }
 }
-function paintElement(section, node, element, atribute, nameAtribute) {
-    const elementSelector = document.createElement(element);
-    const elementContent = document.createTextNode(node);
-    elementSelector.appendChild(elementContent);
-    section.appendChild(elementSelector);
-    elementSelector.setAttribute(atribute, nameAtribute);
-}
-function createSection(recipe, classList, subtotal) {
-    const sectionList = document.createElement('section');
-    sectionList.classList.add(classList);
-    mainSection.appendChild(sectionList);
-    if (sectionList.classList.contains('section-articles')) {
-        createArticles(recipe, sectionList);
-    }
-}
-function createArticles(recipe, sectionList) {
-    recipe.ingredients.map(ingredient => {
-        const articleSelector = document.createElement('article');
-        createLabel(ingredient, articleSelector);
-        if (ingredient.brand) {
-            createArticlesubtitles(ingredient.brand, articleSelector, "");
-        }
-        createArticlesubtitles(ingredient.quantity, articleSelector, "");
-        createArticlesubtitles(ingredient.price, articleSelector, " €");
-        sectionList.appendChild(articleSelector);
-    })
-}
-function createLabel(ingredient, articleSelector) {
-    const labelSelector = document.createElement('label');
-    createInput(ingredient, labelSelector);
-    labelSelector.setAttribute('for', ingredient.product);
-    const labelContent = document.createTextNode(ingredient.product);
-    labelSelector.appendChild(labelContent);
-    articleSelector.appendChild(labelSelector);
-}
-function createInput(ingredient, labelSelector) {
-    const inputSelector = document.createElement('input');
-    inputSelector.setAttribute('id', ingredient.product);
-    inputSelector.setAttribute('class', 'ingredient-input');
-    inputSelector.setAttribute('type', 'checkbox');
-    inputSelector.setAttribute('value', ingredient.price);
-    inputSelector.setAttribute('name', 'ingredient-price');
-    labelSelector.appendChild(inputSelector);
-}
-function createArticlesubtitles(subtitle, articleSelector, unit) {
-    const subtitleSelector = document.createElement('h4');
-    const subtitleContent = document.createTextNode(subtitle + unit);
-    subtitleSelector.appendChild(subtitleContent);
-    articleSelector.appendChild(subtitleSelector);
-}
-// INTERACCIONES: guardar precio en array ingredientsSelected cada vez que se selecciona:
+
 function handleIngredientInput(event) {
     event.currentTarget.classList.toggle('checked');
     // si se selecciona el ingrediente y no se había seleccionado antes, se suma al array
@@ -159,9 +129,54 @@ function paintPrices(tipeArticle, newSubtotal, total) {
     paintElement(tipeArticle, `Comprar ingredientes: ${total} € `, 'button', 'class', 'button-buy');
 }
 
-// botón seleccionar todo
-    // listener botón
-    // click -> add checked en todos los input (y por tanto push de todos los precios)
-// botón deseleccionar todo
-    // listener botón
-    // click -> remove checked en todos los input (volver a array vacío)
+function paintElement(section, node, element, atribute, nameAtribute, scndAtribute, scndNameAtribute) {
+    const elementSelector = document.createElement(element);
+    const elementContent = document.createTextNode(node);
+    elementSelector.appendChild(elementContent);
+    section.appendChild(elementSelector);
+    elementSelector.setAttribute(atribute, nameAtribute);
+    elementSelector.setAttribute(scndAtribute, scndNameAtribute);
+}
+function createSection(recipe, classList, subtotal) {
+    const sectionList = document.createElement('section');
+    sectionList.classList.add(classList);
+    mainSection.appendChild(sectionList);
+    if (sectionList.classList.contains('section-articles')) {
+        createArticles(recipe, sectionList);
+    }
+}
+function createArticles(recipe, sectionList) {
+    recipe.ingredients.map(ingredient => {
+        const articleSelector = document.createElement('article');
+        createLabel(ingredient, articleSelector);
+        if (ingredient.brand) {
+            createArticlesubtitles(ingredient.brand, articleSelector, "");
+        }
+        createArticlesubtitles(ingredient.quantity, articleSelector, "");
+        createArticlesubtitles(ingredient.price, articleSelector, " €");
+        sectionList.appendChild(articleSelector);
+    })
+}
+function createLabel(ingredient, articleSelector) {
+    const labelSelector = document.createElement('label');
+    createInput(ingredient, labelSelector);
+    labelSelector.setAttribute('for', ingredient.product);
+    const labelContent = document.createTextNode(ingredient.product);
+    labelSelector.appendChild(labelContent);
+    articleSelector.appendChild(labelSelector);
+}
+function createInput(ingredient, labelSelector) {
+    const inputSelector = document.createElement('input');
+    inputSelector.setAttribute('id', ingredient.product);
+    inputSelector.setAttribute('class', 'ingredient-input');
+    inputSelector.setAttribute('type', 'checkbox');
+    inputSelector.setAttribute('value', ingredient.price);
+    inputSelector.setAttribute('name', 'ingredient-price');
+    labelSelector.appendChild(inputSelector);
+}
+function createArticlesubtitles(subtitle, articleSelector, unit) {
+    const subtitleSelector = document.createElement('h4');
+    const subtitleContent = document.createTextNode(subtitle + unit);
+    subtitleSelector.appendChild(subtitleContent);
+    articleSelector.appendChild(subtitleSelector);
+}
