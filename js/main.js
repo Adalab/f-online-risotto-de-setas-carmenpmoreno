@@ -22,7 +22,7 @@ function paintData(recipe) {
 
     paintElement(headerSection, recipe.name, 'h2', 'class', 'main-title');
     paintElement(headerSection, 'Seleccionar todo', 'button', 'class', 'select-all-button', 'type', 'button');
-    paintElement(headerSection, 'Deseleccionar todo', 'button', 'class', 'deselect-all-button', 'type', 'button');
+    // paintElement(headerSection, 'Deseleccionar todo', 'button', 'class', 'deselect-all-button', 'type', 'button');
     createSection(recipe, classArticleSection);
     createSection(recipe, classPriceSection, subtotal);
 
