@@ -84,24 +84,27 @@ function createArticlesubtitles(subtitle, articleSelector, unit) {
 // INTERACCIONES: guardar precio en array ingredientsSelected cada vez que se selecciona:
 function handleIngredientInput(event) {
     event.currentTarget.classList.toggle('checked');
-    console.log('total: ', total);
-    // input checked -> añado elemento al array y si antes no lo he añadido
+    // si se selecciona el ingrediente y no se había seleccionado antes, se suma al array
     if (event.currentTarget.classList.contains('checked')
         && !ingredientsSelected.find(price => price === event.currentTarget.value)) {
         const numberPrice = parseFloat(event.currentTarget.value);
         const newingredientsSelected = ingredientsSelected.push(numberPrice);
-        //  si no checked -> elimino ese elemento del array si estuviese incluído
+        //  si quito checked -> elimino ese elemento del array si estuviese incluído
     } else {
         const newingredientsSelected = ingredientsSelected.filter(price => price !== parseFloat(event.currentTarget.value));
         ingredientsSelected = newingredientsSelected;
+        console.log('quito este precio del array');
     }
+    paintArticlePrice();
+}
+
+function paintArticlePrice() {
     const articleTotal = document.querySelector('.total-article');
     const articleTotalNew = document.querySelector('.total-article-new');
     if (articleTotal) {
         const result = ingredientsSelected.reduce((acc, number) => acc + number);
         let newSubtotal = result;
         total = newSubtotal + shippingCost;
-        console.log('subtotal actual', newSubtotal);
         console.log('nuevo total', total);
 
         const sectionList = document.querySelector('.section-price');
@@ -110,21 +113,15 @@ function handleIngredientInput(event) {
         const articleTotal = document.querySelector('.total-article');
         const parentArticle = articleTotal.parentNode;
         parentArticle.replaceChild(articleTotalNew, articleTotal);
-    
-        paintElement(articleTotalNew, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
-        paintElement(articleTotalNew, newSubtotal, 'p', 'class', 'subtotal')
-        paintElement(articleTotalNew, 'Gastos de envío: ', 'h3', 'class', 'shipping-cost-title');
-        paintElement(articleTotalNew, shippingCost, 'p', 'class', 'shipping-cost')
-        paintElement(articleTotalNew, `Total: ${total}`, 'h3', 'class', 'total-title');
-        paintElement(articleTotalNew, `Comprar ingredientes: ${total} `, 'button', 'class', 'button-buy');
-    
+
+        paintPrices(articleTotalNew, newSubtotal, total);
+
         console.log('sustituyo total');
-    } 
-    else if(articleTotalNew) {
+    }
+    else if (articleTotalNew) {
         const result = ingredientsSelected.reduce((acc, number) => acc + number);
         let newSubtotal = result;
         total = newSubtotal + shippingCost;
-        console.log('subtotal actual', newSubtotal);
         console.log('nuevo total', total);
 
         const sectionList = document.querySelector('.section-price');
@@ -133,14 +130,10 @@ function handleIngredientInput(event) {
         const articleTotal = document.querySelector('.total-article');
         const parentArticle = articleTotalNew.parentNode;
         parentArticle.replaceChild(articleTotal, articleTotalNew);
-        
-        paintElement(articleTotal, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
-        paintElement(articleTotal, newSubtotal, 'p', 'class', 'subtotal')
-        paintElement(articleTotal, 'Gastos de envío: ', 'h3', 'class', 'shipping-cost-title');
-        paintElement(articleTotal, shippingCost, 'p', 'class', 'shipping-cost')
-        paintElement(articleTotal, `Total: ${total}`, 'h3', 'class', 'total-title');
-        paintElement(articleTotal, `Comprar ingredientes: ${total} `, 'button', 'class', 'button-buy');
-    } 
+
+        paintPrices(articleTotal, newSubtotal, total);
+
+    }
     else {
         const sectionList = document.querySelector('.section-price');
         const result = ingredientsSelected.reduce((acc, number) => acc + number);
@@ -148,18 +141,22 @@ function handleIngredientInput(event) {
         total = newSubtotal + shippingCost;
         console.log('subtotal actual', newSubtotal);
         console.log('nuevo total', total);
-    
+
         paintElement(sectionList, "", 'article', 'class', 'total-article');
         const articleTotal = document.querySelector('.total-article');
-        paintElement(articleTotal, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
-        paintElement(articleTotal, newSubtotal, 'p', 'class', 'subtotal')
-        paintElement(articleTotal, 'Gastos de envío: ', 'h3', 'class', 'shipping-cost-title');
-        paintElement(articleTotal, shippingCost, 'p', 'class', 'shipping-cost')
-        paintElement(articleTotal, `Total: ${total}`, 'h3', 'class', 'total-title');
-        paintElement(articleTotal, `Comprar ingredientes: ${total} `, 'button', 'class', 'button-buy');
-    
+        paintPrices(articleTotal, newSubtotal, total);
+
         console.log('imprimo total');
     }
+}
+
+function paintPrices(tipeArticle, newSubtotal, total) {
+    paintElement(tipeArticle, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
+    paintElement(tipeArticle, `${newSubtotal} €`, 'p', 'class', 'subtotal');
+    paintElement(tipeArticle, 'Gastos de envío: ', 'h3', 'class', 'shipping-cost-title');
+    paintElement(tipeArticle, ` ${shippingCost} €`, 'p', 'class', 'shipping-cost')
+    paintElement(tipeArticle, `Total: ${total} €`, 'h3', 'class', 'total-title');
+    paintElement(tipeArticle, `Comprar ingredientes: ${total} € `, 'button', 'class', 'button-buy');
 }
 
 // botón seleccionar todo
