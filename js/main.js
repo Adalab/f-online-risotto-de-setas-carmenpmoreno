@@ -1,82 +1,19 @@
-// uso el json directamente porque no puedo hacer el fetch desde la biblioteca
-const recipe = [
-    {
-        recipe: {
-            name: "Risotto de setas (vegano)",
-            "shipping-cost": 7,
-            currency: "€",
-            ingredients: [
-                {
-                    product: "Margarina de maíz",
-                    brand: "Artua",
-                    items: 1,
-                    quantity: "600 gr.",
-                    price: 2.95,
-                },
-                {
-                    product: "Arroz de Valencia",
-                    brand: "De Nuestra Tierra",
-                    items: 1,
-                    quantity: "1 kg.",
-                    price: 2.4,
-                },
-                {
-                    product: "Caldo de verduras natural",
-                    brand: "Aneto",
-                    items: 1,
-                    quantity: "1 l.",
-                    price: 3.6,
-                },
-                {
-                    product: "Seta Shiitake ecológica",
-                    items: 1,
-                    quantity: "200 gr.",
-                    price: 3.55,
-                },
-                {
-                    product: "Paragoce, vino blanco",
-                    brand: "Verdejo D.O. Rueda",
-                    items: 1,
-                    quantity: "0,57 cl.",
-                    price: 5.85,
-                },
-                {
-                    product: "Ajo",
-                    items: 1,
-                    quantity: "270 gr.",
-                    price: 1.49,
-                },
-                {
-                    product: "Cebolla chalotas",
-                    items: 1,
-                    quantity: "200 gr.",
-                    price: 2.99,
-                },
-            ],
-        },
-    },
-];
 const shippingCost = 7;
 const headerSection = document.querySelector('.header-section');
 const mainSection = document.querySelector('.main-section');
-// let recipe = {}
 let ingredientsSelected = [];
 let subtotal = 0;
 let total = 0;
 let items = 0;
 
-// fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-setas.json')
-//     .then(response => response.json())
-//     .then(data => {
-//         recipe = data.recipe;
-//         console.log(recipe);
-//         return (
-//             paintData(recipe)
-//         );
-//     })
-
-// EN AUSENCIA DE FETCH, PINTO DATOS DESDE UN MAP DE MI ARRAY RECIPE
-let recipeJson = recipe.map(recipeObject => paintData(recipeObject.recipe));
+fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-setas.json')
+    .then(response => response.json())
+    .then(data => {
+        recipe = data.recipe;
+        return (
+            paintData(recipe)
+        );
+    })
 
 function paintData(recipe) {
     const classArticleSection = 'section-articles';
