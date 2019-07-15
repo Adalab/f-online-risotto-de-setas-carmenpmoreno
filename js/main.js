@@ -1,17 +1,82 @@
+// uso el json directamente porque no puedo hacer el fetch desde la biblioteca
+const recipe = [
+    {
+        recipe: {
+            name: "Risotto de setas (vegano)",
+            "shipping-cost": 7,
+            currency: "€",
+            ingredients: [
+                {
+                    product: "Margarina de maíz",
+                    brand: "Artua",
+                    items: 1,
+                    quantity: "600 gr.",
+                    price: 2.95,
+                },
+                {
+                    product: "Arroz de Valencia",
+                    brand: "De Nuestra Tierra",
+                    items: 1,
+                    quantity: "1 kg.",
+                    price: 2.4,
+                },
+                {
+                    product: "Caldo de verduras natural",
+                    brand: "Aneto",
+                    items: 1,
+                    quantity: "1 l.",
+                    price: 3.6,
+                },
+                {
+                    product: "Seta Shiitake ecológica",
+                    items: 1,
+                    quantity: "200 gr.",
+                    price: 3.55,
+                },
+                {
+                    product: "Paragoce, vino blanco",
+                    brand: "Verdejo D.O. Rueda",
+                    items: 1,
+                    quantity: "0,57 cl.",
+                    price: 5.85,
+                },
+                {
+                    product: "Ajo",
+                    items: 1,
+                    quantity: "270 gr.",
+                    price: 1.49,
+                },
+                {
+                    product: "Cebolla chalotas",
+                    items: 1,
+                    quantity: "200 gr.",
+                    price: 2.99,
+                },
+            ],
+        },
+    },
+];
 const headerSection = document.querySelector('.header-section');
 const mainSection = document.querySelector('.main-section');
-let recipe = {}
+// let recipe = {}
 let ingredientsSelected = [];
-let subtotal = ""
+let subtotal = "";
+let total = "";
 
-fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-setas.json')
-    .then(response => response.json())
-    .then(data => {
-        recipe = data.recipe;
-        return (
-            paintData(recipe)
-        );
-    })
+// fetch('https://raw.githubusercontent.com/Adalab/recipes-data/master/rissoto-setas.json')
+//     .then(response => response.json())
+//     .then(data => {
+//         recipe = data.recipe;
+//         console.log(recipe);
+//         return (
+//             paintData(recipe)
+//         );
+//     })
+
+// PINTO DATOS DESDE UN MAP DE MI ARRAY RECIPE
+// console.log(recipe);
+let recipeJson = recipe.map(recipeObject => paintData(recipeObject.recipe));
+
 function paintData(recipe) {
     paintElement(headerSection, recipe.name, 'h2', 'class', 'main-title');
     paintElement(headerSection, 'Seleccionar todo', 'button', 'type', 'button')
@@ -41,7 +106,7 @@ function createSection(recipe, classList, subtotal) {
         createArticles(recipe, sectionList);
     } else {
         paintElement(sectionList, '', 'section', 'class', 'section-total');
-        paintElement(sectionList, 'Comprar ingredientes: ', 'button', 'class', 'button-buy');
+        paintElement(sectionList, `Comprar ingredientes: ${total} `, 'button', 'class', 'button-buy');
         const buttonBuy = document.querySelector('.button-buy');
         console.log(buttonBuy);
         buttonBuy.addEventListener('click', handleButtonBuy);
@@ -96,22 +161,33 @@ function handleIngredientInput(event) {
         const newingredientsSelected = ingredientsSelected.filter(price => price !== parseFloat(event.currentTarget.value));
         ingredientsSelected = newingredientsSelected;
     }
+    if (total !== "") {
+        const articleTotal = document.querySelector('.total-article');
+        articleTotal.classList.add('hidden');
+        printSubtotal();
+    } else {
+        printSubtotal();
+    }
 }
 // cuando pulso botón comprar, se pinta la sección con el precio:
 function handleButtonBuy(event) {
-    printSubtotal();
+    // printSubtotal();
 }
 function printSubtotal() {
     const result = ingredientsSelected.reduce((acc, number) => acc + number);
     let newSubtotal = result;
     console.log(newSubtotal);
     const sectionList = document.querySelector('.section-total');
-    paintElement(sectionList, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
-    paintElement(sectionList, newSubtotal, 'p', 'class', 'subtotal')
-    paintElement(sectionList, 'Gastos de envío: ', 'h3', 'class', 'shippinf-cost-title');
-    paintElement(sectionList, "", 'p', 'class', 'shipping-cost')
-    paintElement(sectionList, 'Total: ', 'h3', 'class', 'total-title');
-    paintElement(sectionList, "", 'p', 'class', 'total')
+    paintElement(sectionList, "", 'article', 'class', 'total-article');
+    const articleTotal = document.querySelector('.total-article');
+    // const shippingCost = recipe.shipping-cost;
+    const shippingCost = 7;
+    total = newSubtotal + shippingCost;
+    paintElement(articleTotal, 'Subtotal: ', 'h3', 'class', 'subtotal-title');
+    paintElement(articleTotal, newSubtotal, 'p', 'class', 'subtotal')
+    paintElement(articleTotal, 'Gastos de envío: ', 'h3', 'class', 'shippinf-cost-title');
+    paintElement(articleTotal, shippingCost, 'p', 'class', 'shipping-cost')
+    paintElement(articleTotal, `Total: ${total}`, 'h3', 'class', 'total-title');
     console.log('imprimo total');
 }
 
