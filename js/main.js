@@ -87,7 +87,8 @@ function handleIngredientInput(event) {
         const noPrice = document.querySelector('.no-price');
         const articleTotal = document.querySelector('.total-article');
         sectionList.replaceChild(noPrice, articleTotal);
-        console.log('no pinto nada porque no hay seleccionados')
+        console.log('no pinto nada porque no hay seleccionados');
+        ingredientsSelected = [];
     }
 }
 function paintArticlePrice() {
