@@ -22,7 +22,7 @@ function paintData(recipe) {
 
     paintElement(headerSection, recipe.name, 'h2', 'class', 'main-title');
     paintElement(headerSection, 'Seleccionar todo', 'button', 'class', 'select-all-button', 'type', 'button');
-    // paintElement(headerSection, 'Deseleccionar todo', 'button', 'class', 'deselect-all-button', 'type', 'button');
+    paintElement(headerSection, 'Deseleccionar todo', 'button', 'class', 'deselect-all-button', 'type', 'button');
     createSection(recipe, classArticleSection);
     createSection(recipe, classPriceSection, subtotal);
 
@@ -34,6 +34,8 @@ function paintData(recipe) {
 
     const selectButton = document.querySelector('.select-all-button');
     selectButton.addEventListener('click', handleButtonSelect);
+    const deselectButton = document.querySelector('.deselect-all-button');
+    deselectButton.addEventListener('click', handleButtonSelect);
 }
 
 // INTERACCIONES:
@@ -43,31 +45,51 @@ function handleButtonSelect(event) {
     console.log(event.currentTarget.classList);
     if (event.currentTarget.classList.contains('select-all-button')) {
         ingredientInputs.forEach(ingredientInput => {
-            ingredientInput.setAttribute('checked', 'true');
+            ingredientInput.checked = true;
             const numberPrice = parseFloat(ingredientInput.value);
             const newingredientsSelected = ingredientsSelected.push(numberPrice);
             console.log(ingredientsSelected);
-            paintArticlePrice();
         });
+        paintArticlePrice();
+    } else {
+        ingredientInputs.forEach(ingredientInput => {
+            ingredientInput.checked = false;
+        });
+        const sectionList = document.querySelector('.section-price');
+        paintElement(sectionList, "", 'p', 'class', 'no-total-feedback');
+        const noTotalFeedback = document.querySelector('.no-total-feedback');
+        const articleTotal = document.querySelector('.total-article');
+        sectionList.replaceChild(noTotalFeedback, articleTotal);
+        ingredientsSelected = [];
     }
 }
-
 function handleIngredientInput(event) {
-    event.currentTarget.classList.toggle('checked');
+    const ingredientInputs = document.querySelectorAll('.ingredient-input');
+    event.currentTarget.classList.toggle('selected');
     // si se selecciona el ingrediente y no se había seleccionado antes, se suma al array
-    if (event.currentTarget.classList.contains('checked')
+    if (event.currentTarget.classList.contains('selected')
         && !ingredientsSelected.find(price => price === event.currentTarget.value)) {
         const numberPrice = parseFloat(event.currentTarget.value);
-        const newingredientsSelected = ingredientsSelected.push(numberPrice);
+        let newingredientsSelected = ingredientsSelected.push(numberPrice);
+        ingredientsSelected = ingredientsSelected;
+        console.log('tras el push tengo en ingredientsSelected:', ingredientsSelected);
+        paintArticlePrice();
         //  si quito checked -> elimino ese elemento del array si estuviese incluído
-    } else {
-        const newingredientsSelected = ingredientsSelected.filter(price => price !== parseFloat(event.currentTarget.value));
+    } else if (ingredientsSelected.length > 1) {
+        console.log(ingredientsSelected);
+        let newingredientsSelected = ingredientsSelected.filter(price => price !== parseFloat(event.currentTarget.value));
         ingredientsSelected = newingredientsSelected;
-        console.log('quito este precio del array');
+        console.log('tras FILTRAR tengo en ingredientsSelected:', ingredientsSelected);
+        paintArticlePrice();
+    } else {
+        const sectionList = document.querySelector('.section-price');
+        paintElement(sectionList, "", 'p', 'class', 'no-price');
+        const noPrice = document.querySelector('.no-price');
+        const articleTotal = document.querySelector('.total-article');
+        sectionList.replaceChild(noPrice, articleTotal);
+        console.log('no pinto nada porque no hay seleccionados')
     }
-    paintArticlePrice();
 }
-
 function paintArticlePrice() {
     const articleTotal = document.querySelector('.total-article');
     const articleTotalNew = document.querySelector('.total-article-new');
@@ -103,8 +125,9 @@ function paintArticlePrice() {
 
         paintPrices(articleTotal, newSubtotal, total);
 
-    }
-    else {
+        console.log('sustituyo total');
+
+    } else {
         const sectionList = document.querySelector('.section-price');
         const result = ingredientsSelected.reduce((acc, number) => acc + number);
         let newSubtotal = result;
@@ -116,7 +139,7 @@ function paintArticlePrice() {
         const articleTotal = document.querySelector('.total-article');
         paintPrices(articleTotal, newSubtotal, total);
 
-        console.log('imprimo total');
+        console.log('imprimo primer total');
     }
 }
 
